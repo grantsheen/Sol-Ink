@@ -20,14 +20,9 @@ export const NFTView = () => {
   async function execute(e) {
     const browserFile: File = e.target.files[0];
     const file: MetaplexFile = await toMetaplexFileFromBrowser(browserFile);
-    console.log(file)
-    try {
-      const tx_1 = (await storage.bundlr()).fund(100000000);
-      console.log(tx_1)
-    } catch (error) {
-      console.error(error)
-    }
-    
+    // const price = await metaplex.storage().getUploadPriceForFile(file);
+    // await storage.fund(price);
+
     const { uri, metadata } = await metaplex
       .nfts()
       .uploadMetadata({
@@ -35,9 +30,8 @@ export const NFTView = () => {
           image: file,
       })
       .run();
+    console.log(`Your picture has been uploaded to Arweave at:\n${metadata.image}`)
 
-    console.log(metadata.image)
-    console.log(uri)
     const { nft } = await metaplex
       .nfts()
       .create({
@@ -47,12 +41,9 @@ export const NFTView = () => {
       })
       .run(); 
 
-    console.log(nft)
-    const imageUrl = nft.json.image;
-    console.log(imageUrl)
-    const mint = nft.mintAddress;
-    const found = await metaplex.nfts().findByMint(mint).run();
-    console.log(found.json.image)
+    const address = nft.mintAddress.toString()
+    console.log(`You can view your NFT on the Solana Explorer at:\nhttps://explorer.solana.com/address/${address}?cluster=devnet`)
+
   }
 
   // async function onSelect() {
