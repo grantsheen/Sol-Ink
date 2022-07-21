@@ -53,10 +53,13 @@ export const AppBar: FC = props => {
         <div className="hidden md:inline md:navbar-center">
           <div className="flex items-stretch">
             <Link href="/">
-              <a className="btn btn-ghost btn-sm rounded-btn">Home</a>
+               <a className="btn btn-ghost btn-sm rounded-btn">Home</a>
             </Link>
             <Link href="/basics">
               <a className="btn btn-ghost btn-sm rounded-btn">Basics</a>
+            </Link>
+            <Link href="/nft">
+              <a className="btn btn-ghost btn-sm rounded-btn">NFT</a>
             </Link>
           </div>
         </div>
