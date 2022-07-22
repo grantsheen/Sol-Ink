@@ -2549,10 +2549,10 @@
   "resolved" "https://registry.npmjs.org/@metaplex-foundation/cusper/-/cusper-0.0.2.tgz"
   "version" "0.0.2"
 
-"@metaplex-foundation/js@^0.12.2":
-  "integrity" "sha512-ioLMsMfWSUYvWyKFJACnudjmgwGKl6hUvHFGBwW/Krw5PVNhTcoCX/C2yytkQuGbbJwUa0WjEP6+vgdCRamx8w=="
-  "resolved" "https://registry.npmjs.org/@metaplex-foundation/js/-/js-0.12.2.tgz"
-  "version" "0.12.2"
+"@metaplex-foundation/js@^0.12.5":
+  "integrity" "sha512-F7I1ocJ0UhM7YcMbahAxdBGBntSFDM0qn5jWkLNmnGQMiglB1r6L1l5P8Y/p54F/JDJHbDSIMAX86TSU59xPUA=="
+  "resolved" "https://registry.npmjs.org/@metaplex-foundation/js/-/js-0.12.5.tgz"
+  "version" "0.12.5"
   dependencies:
     "@aws-sdk/client-s3" "^3.54.1"
     "@bundlr-network/client" "^0.7.14"
@@ -3124,10 +3124,10 @@
     "@solana/wallet-adapter-tokenpocket" "^0.4.2"
     "@solana/wallet-adapter-torus" "^0.11.10"
 
-"@solana/web3.js@^1.30.2", "@solana/web3.js@^1.31.0", "@solana/web3.js@^1.32.0", "@solana/web3.js@^1.35.1", "@solana/web3.js@^1.36.0", "@solana/web3.js@^1.44.0", "@solana/web3.js@^1.44.3", "@solana/web3.js@^1.47.3", "@solana/web3.js@^1.48.0", "@solana/web3.js@^1.5.0":
-  "integrity" "sha512-Gb6XvdhGjGI7CdAXLmlMIEvEYvrwqc78JOtwCsSrTqzz7Ek/BhJpZ/Cv89gxRDrWxf6kHegAfaN2FxwuYMmDZQ=="
-  "resolved" "https://registry.npmjs.org/@solana/web3.js/-/web3.js-1.48.0.tgz"
-  "version" "1.48.0"
+"@solana/web3.js@^1.30.2", "@solana/web3.js@^1.31.0", "@solana/web3.js@^1.32.0", "@solana/web3.js@^1.35.1", "@solana/web3.js@^1.36.0", "@solana/web3.js@^1.44.0", "@solana/web3.js@^1.44.3", "@solana/web3.js@^1.47.3", "@solana/web3.js@^1.5.0", "@solana/web3.js@^1.50.0":
+  "integrity" "sha512-9KCuF3QLHd/dkYlffYPSHPbPFaBKqiwwDqWR+C/z1CZZbQybu+NCydWvwHHqrrlG50wn15L/6zYLb5Tjr6tOkA=="
+  "resolved" "https://registry.npmjs.org/@solana/web3.js/-/web3.js-1.50.0.tgz"
+  "version" "1.50.0"
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@ethersproject/sha2" "^5.5.0"
