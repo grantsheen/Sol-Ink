@@ -7,6 +7,8 @@ export const NFTView = () => {
   const wallet = useWallet();
   // const [file, setFile] = useState<MetaplexFile>();
   const [nftUri, setNftUri] = useState('');
+  const [arweave, setArweave] = useState('')
+  const [nftLink, setNftLink] = useState('');
   const { connection } = useConnection();
 
   const metaplex = Metaplex.make(connection)
@@ -33,7 +35,27 @@ export const NFTView = () => {
       })
       .run();
     setNftUri(uri);
-    console.log(`Your picture has been uploaded to Arweave at:\n${metadata.image}`)
+    setArweave(metadata.image)
+  }
+
+  const showArweave = () => {
+    return (
+      <div className='text-center'>
+          <h2>
+            Your photo has been uploaded to Arweave <b><a href={arweave} target='_blank'>here</a></b>
+          </h2>
+      </div> 
+    )
+  }
+
+  const showNftLink = () => {
+    return (
+      <div className='text-center'>
+        <h2>
+          View your minted NFT on the Solana Explorer <b><a href={nftLink} target='_blank'>here</a></b>
+        </h2>
+      </div>
+    )
   }
 
   async function mint() {
@@ -47,7 +69,7 @@ export const NFTView = () => {
       .run(); 
 
     const address = nft.mintAddress.toString()
-    console.log(`You can view your minted NFT on the Solana Explorer at:\nhttps://explorer.solana.com/address/${address}?cluster=devnet`)
+    setNftLink(`https://explorer.solana.com/address/${address}?cluster=devnet`)
   }
 
   return (
@@ -62,14 +84,16 @@ export const NFTView = () => {
         <div className="text-center">
           <input type='file' onChange={upload}/>
         </div>
+        {arweave && showArweave()}
         <button
           className="group w-60 m-2 btn animate-pulse disabled:hidden bg-gradient-to-r from-[#9945FF] to-[#14F195] hover:from-pink-500 hover:to-yellow-500 ... "
-          onClick={mint} disabled={!nftUri}
+          onClick={mint} disabled={!nftUri || nftLink != ''}
         >
           <span className="block group-disabled:hidden" > 
               Mint NFT 
           </span>
         </button>
+        {nftLink && showNftLink()}
       </div>
     </div>
   );
