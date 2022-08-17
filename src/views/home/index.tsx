@@ -2,6 +2,7 @@ import { Metaplex, MetaplexFile, bundlrStorage, BundlrStorageDriver, toMetaplexF
 import { useState, useEffect } from "react";
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { RequestAirdrop } from '../../components/RequestAirdrop';
+import { useNetworkConfiguration } from '../../contexts/NetworkConfigurationProvider';
 import useUserSOLBalanceStore from '../../stores/useUserSOLBalanceStore';
 
 export const HomeView = () => {
@@ -11,12 +12,12 @@ export const HomeView = () => {
   const [symbol, setSymbol] = useState('');
   const [nftLink, setNftLink] = useState('');
 
-
   const wallet = useWallet();
   const { connection } = useConnection();
 
   const balance = useUserSOLBalanceStore((s) => s.balance)
   const { getUserSOLBalance } = useUserSOLBalanceStore()
+  const { networkConfiguration } = useNetworkConfiguration();
 
   useEffect(() => {
     if (wallet.publicKey) {
@@ -28,19 +29,24 @@ export const HomeView = () => {
   const metaplex = Metaplex.make(connection)
                            .use(walletAdapterIdentity(wallet))
                            .use(bundlrStorage());
-  // const storage = metaplex.storage().driver() as BundlrStorageDriver;
+  const storage = metaplex.storage().driver() as BundlrStorageDriver;
   
-  metaplex.use(bundlrStorage({
-    address: 'https://devnet.bundlr.network',
-    providerUrl: 'https://api.devnet.solana.com',
-    timeout: 60000,
-  }));
+  if (networkConfiguration == 'mainnet-beta') {
+    metaplex.use(bundlrStorage({
+      providerUrl: 'https://api.mainnet-beta.solana.com',
+      timeout: 60000,
+    }));
+  } else {
+    metaplex.use(bundlrStorage({
+      address: 'https://devnet.bundlr.network',
+      providerUrl: 'https://api.devnet.solana.com',
+      timeout: 60000,
+    }));
+  }
   
   async function upload(e) {
     const browserFile: File = e.target.files[0];
     const file: MetaplexFile = await toMetaplexFileFromBrowser(browserFile);
-    // const price = await metaplex.storage().getUploadPriceForFile(file);
-    // await storage.fund(price);
 
     const { uri, metadata } = await metaplex
       .nfts()
@@ -107,7 +113,7 @@ export const HomeView = () => {
       .run(); 
 
     const address = nft.mintAddress.toString()
-    setNftLink(`https://explorer.solana.com/address/${address}?cluster=devnet`)
+    setNftLink(`https://explorer.solana.com/address/${address}?cluster=${networkConfiguration}`)
   }
 
 
@@ -120,7 +126,7 @@ export const HomeView = () => {
         <h4 className="md:w-full text-center text-slate-300 my-4 text-2xl">
           <p>Upload any photo and mint it as an NFT on Solana!</p>
         </h4>
-        <RequestAirdrop />
+        {networkConfiguration != 'mainnet-beta' && <RequestAirdrop />}
         {wallet && <p>SOL Balance: {(balance || 0).toLocaleString()}</p>}
         <div className="text-center mt-8">
           <input type='file' onChange={upload}/>
