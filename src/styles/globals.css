@@ -21,10 +21,22 @@ a {
 
 input[type=text] {
   color: #000000;
+  padding: 4px;
+  margin: 12px;
+  border-radius: 4px;
 }
 
 /* example: override wallet button style */
 .wallet-adapter-button:not([disabled]):hover {
   background-color: #707070;
+}
+
+.image-container {
+  display: flex;
+  justify-content: center;
+}
+
+.description {
+  width: 200
 }
 
