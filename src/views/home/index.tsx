@@ -1,4 +1,4 @@
-import { Metaplex, MetaplexFile, bundlrStorage, BundlrStorageDriver, toMetaplexFileFromBrowser, walletAdapterIdentity } from "@metaplex-foundation/js";
+import { Metaplex, MetaplexFile, bundlrStorage, toMetaplexFileFromBrowser, walletAdapterIdentity, OperationHandlerMissingError } from "@metaplex-foundation/js";
 import { useState, useEffect, useRef } from "react";
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { RequestAirdrop } from '../../components/RequestAirdrop';
@@ -11,16 +11,21 @@ export const HomeView = () => {
   const [name, setName] = useState('');
   const [symbol, setSymbol] = useState('');
   const [description, setDescription] = useState('');
-  // const [attributes, setAttributes] = useState([{'trait_type':'test','value':'test'}]);
+  const [attributes, setAttributes] = useState([]);
+  const [file, setFile] = useState(null);
   const [nftLink, setNftLink] = useState('');
-
-
+  
   // Configuration
+  const bottomRef = useRef(null);
   const wallet = useWallet();
   const { connection } = useConnection();
   const balance = useUserSOLBalanceStore((s) => s.balance)
   const { getUserSOLBalance } = useUserSOLBalanceStore()
   const { networkConfiguration } = useNetworkConfiguration();
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({behavior: 'smooth'});
+  });
 
   useEffect(() => {
     if (wallet.publicKey) {
@@ -46,17 +51,19 @@ export const HomeView = () => {
     }));
   }
 
-
   // Upload photo
-  const [file, setFile] = useState(null);
+
   const upload = (file) => {
     setFile(file);
-  };
 
+    // Set current date attribute
+    const now = new Date();
+    console.log(now.toLocaleDateString())
+    setAttributes([{"trait_type": 'Date', 'value': now.toLocaleDateString()}])
+  };
 
   // Mint NFT
   const mintRef = useRef(null);
-  const scroll = (ref) => ref.current?.scrollIntoView();
   async function mint() {
     const mFile: MetaplexFile = await toMetaplexFileFromBrowser(file);
 
@@ -66,7 +73,7 @@ export const HomeView = () => {
       .uploadMetadata({
           image: mFile,
           description: description,
-          // attributes: attributes
+          attributes: attributes,
       })
       .run();
     
@@ -91,49 +98,60 @@ export const HomeView = () => {
         <div className="image-container">
           <img src={URL.createObjectURL(file)} width="300"/>
         </div>
-        <form className="my-5">
-            <label className="text-xl"> Name: 
-              <input className="text-m" type="text" required
-                        onChange={(e) => setName(e.target.value)}/>
-            </label>
-            <label className="text-xl"> Symbol: 
-              <input className="text-m" type="text"
-                        onChange={(e) => setSymbol(e.target.value)}/>
-            </label>
-            <label className="text-xl"> Description: 
-              <input className="text-m description" type="text" required
-                        onChange={(e) => setDescription(e.target.value)}/>
-            </label>
-          {/* <h2 className="text-xl">Attributes:</h2>
-          <Form.Control className="text-m" type="text" placeholder="Trait Type" required
-                      onChange={(e) => setName(e.target.value)}/>
-          <Form.Control className="text-m" type="text" placeholder="Trait Value" required
-                      onChange={(e) => setName(e.target.value)}/> */}
-        </form>
+        <div className="mt-8 grid grid-cols-2">
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text text-xl text-slate-300">Name:</span>
+            </label> 
+            <input type="text" className="text bg-slate-300 text-xl input input-bordered"
+                  onChange={(e) => setName(e.target.value)} required/>
+          </div>
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text text-xl text-slate-300">Symbol:</span>
+            </label> 
+            <input type="text" className="text bg-slate-300 text-xl input input-bordered"
+                  onChange={(e) => setSymbol(e.target.value)}/>
+          </div>
+          <div className="form-control col-span-2">
+            <label className="label">
+              <span className="label-text text-xl text-slate-300">Description:</span>
+            </label> 
+            <textarea className="textarea h-16 bg-slate-300 text-xl"
+                  onChange={(e) => setDescription(e.target.value)}/>
+          </div>
+          {/* <div className="form-control col-span-2">
+            <label className="label">
+              <span className="label-text text-xl text-slate-300">Attributes:</span>
+            </label> 
+            <div>
+              <input type="text" className="text bg-slate-300 text-xl input input-bordered"
+                    placeholder="Trait type"/>
+              <input type="text" className="text bg-slate-300 text-xl input input-bordered"
+                    placeholder="Trait value"/>
+            </div>
+          </div> */}
+        </div>
         <button
-          className="group w-60 btn animate-pulse disabled:hidden bg-gradient-to-r from-[#9945FF] to-[#14F195] hover:from-pink-500 hover:to-yellow-500 ... "
-          onClick={mint}
+          className="group w-60 mt-5 btn animate-pulse disabled:hidden bg-gradient-to-r from-[#9945FF] to-[#14F195] hover:from-pink-500 hover:to-yellow-500 ... "
+          type="submit" onClick={mint}
         >
-          <span className="block group-disabled:hidden" > 
+          <span className="block group-disabled:hidden"> 
               Mint NFT 
           </span>
         </button>
-        <div ref={mintRef} />
       </div>
     )
   }
   
 
   // Show NFT Link
-  const linkRef = useRef(null);
   const showNftLink = () => {
-    linkRef.current?.scrollIntoView({behavior: 'smooth'});
     return (
       <div className='text-center text-xl mt-8 mb-8'>
         <h2 className="text-2xl">
-          View your minted NFT on the Solana Explorer <b><a href={nftLink} target='_blank'>here</a></b>
+          View your minted NFT on the Solana Explorer <b><a href={nftLink} target='_blank'>here</a></b> and in your wallet!
         </h2>
-        <div ref={linkRef} />
       </div>
     )
   }
@@ -149,10 +167,11 @@ export const HomeView = () => {
         </h4>
         {networkConfiguration != "mainnet-beta" && <div className="text-center"><RequestAirdrop/></div>}
         {wallet && <h4 className="md:w-full text-center text-slate-300 mb-4 text-xl">SOL Balance: {(balance || 0).toLocaleString()}</h4>}
-        <FileUploader handleChange={upload} name="file" />
+        <FileUploader className="text-center" handleChange={upload} name="file" />
         {file && mintNFT()}
         {nftLink && showNftLink()}
       </div>
+      <div ref={bottomRef} />
     </div>
   );
 };

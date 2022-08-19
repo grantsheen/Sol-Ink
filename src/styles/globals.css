@@ -21,6 +21,13 @@ a {
 
 input[type=text] {
   color: #000000;
+  padding: 12px;
+  margin: 12px;
+  border-radius: 4px;
+}
+
+textarea {
+  color: #000000;
   padding: 4px;
   margin: 12px;
   border-radius: 4px;
